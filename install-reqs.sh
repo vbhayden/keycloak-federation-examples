@@ -23,34 +23,6 @@ else
 	echo "Skipping, Curl already installed!"
 fi
 
-# Java
-#
-announce "Java"
-
-if ! [ -x "$(command -v java)" ]; then
-	
-	# Add the oracle source and update / install
-	add-apt-repository ppa:webupd8team/java
-	apt-get update
-	apt-get install oracle-java8-installer
-	
-else
-	echo "Skipping, Java already installed!"
-fi
-
-# Maven
-#
-announce "Maven"
-
-if ! [ -x "$(command -v mvn)" ]; then
-	
-	# Maven is pretty simple
-	apt-get install maven
-	
-else
-	echo "Skipping, Maven already installed!"
-fi
-
 # Docker
 #
 announce "Docker"
