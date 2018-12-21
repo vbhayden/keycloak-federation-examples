@@ -1,6 +1,5 @@
-// Simple Mongoose Example of an Activity Index
 //
-// This is a NodeJS Express application 
+// This is an example NodeJS Express application using Keycloak
 //
 const fs = require("fs");
 const cors = require("cors");

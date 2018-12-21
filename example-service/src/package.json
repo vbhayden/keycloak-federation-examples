@@ -1,5 +1,5 @@
 {
-  "name": "activity-index",
+  "name": "example-service",
   "version": "1.0.0",
   "description": "Simple example service protected by Keycloak",
   "main": "app.js",
@@ -16,6 +16,5 @@
     "express": "^4.16.4",
     "express-session": "^1.15.6",
     "keycloak-connect": "^4.6.0",
-    "mongoose": "^5.3.12"
   }
 }
