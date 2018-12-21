@@ -15,6 +15,6 @@
     "ejs": "^2.6.1",
     "express": "^4.16.4",
     "express-session": "^1.15.6",
-    "keycloak-connect": "^4.6.0",
+    "keycloak-connect": "^4.6.0"
   }
 }
