@@ -54,12 +54,12 @@
          "enabled":true,
          "protocol":"openid-connect",
          "fullScopeAllowed":true,
-         "consentRequired":true,
+         "consentRequired":false,
          "publicClient":true,
          "clientAuthenticatorType":"client-secret",
          "directAccessGrantsEnabled":true,
          "implicitFlowEnabled":true,
-         "standardFlowEnabled":false,
+         "standardFlowEnabled":true,
          "adminUrl":"",
          "redirectUris":[
             "*"

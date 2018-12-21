@@ -7,6 +7,6 @@ COPY src/ /usr/src/app/
 
 RUN npm install --save
 
-EXPOSE 8085
+EXPOSE 3000
 
 CMD ["npm", "start"]
