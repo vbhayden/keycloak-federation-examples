@@ -1,0 +1,66 @@
+version: '3'
+services:
+ 
+  postgres:
+    restart: always
+    build: 
+      context: postgres
+    ports:
+      - "127.0.0.1:5432:5432"
+    container_name: docker_postgres
+    volumes:
+      - ./postgres/data:/var/lib/postgresql/data
+
+  example-service:
+    restart: always
+    build: 
+      context: example-service
+    ports:
+      - "3000:3000"
+    container_name: docker_service
+
+  # Keycloak instance.  This thing is the whole point of the repo
+  keycloak:
+    restart: always
+    build: 
+      context: keycloak
+    ports:
+      - "8081:8080"
+      - "9991:9990"
+    links:
+      - postgres:docker_postgres
+    container_name: docker_keycloak
+
+  # OpenLDAP server
+  openldap:
+    restart: always
+    command: --loglevel debug
+    image: osixia/openldap:1.1.5
+    container_name: docker_openldap
+    environment:
+      LDAP_LOG_LEVEL: "256"
+      LDAP_ORGANISATION: "Example Company"
+      LDAP_DOMAIN: "example.com"
+      LDAP_ADMIN_PASSWORD: "password"
+    tty: true
+    stdin_open: true
+    volumes:
+      - ./openldap/data:/var/lib/ldap
+      - ./openldap/config:/etc/ldap/slapd.d
+      - ./openldap/certs:/container/service/slapd/assets/certs/
+    ports:
+      - "389:389"
+      - "639:639"
+
+  # PHP-based web client for interacting with the OpenLDAP instance
+  phpldapadmin:
+    restart: always
+    image: osixia/phpldapadmin:latest
+    container_name: docker_phpldapadmin
+    environment:
+      PHPLDAPADMIN_LDAP_HOSTS: "docker_openldap"
+      PHPLDAPADMIN_HTTPS=false:
+    ports:
+      - "8082:80"
+    depends_on:
+      - openldap

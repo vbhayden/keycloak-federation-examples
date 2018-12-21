@@ -1,0 +1,78 @@
+# Mark the commands below to be run as a batch
+batch
+
+# Add Postgres Driver
+#
+/subsystem=datasources/jdbc-driver=postgresql:add( \
+	driver-name=postgresql, \
+	driver-module-name=org.postgresql, \
+	driver-xa-datasource-class-name=org.postgresql.Driver \
+)
+
+# Add the Postgres module
+#
+module add \
+	--name=org.postgresql \
+	--slot=main \
+	--resources=/opt/jboss/keycloak/modules/system/layers/base/org/postgresql/main/postgresql.jar \
+	--dependencies=javax.api,javax.transaction.api
+
+
+# Remove defaults
+#
+#data-source remove --name=ExampleDS
+#/subsystem=datasources/jdbc-driver=h2:remove
+
+#data-source remove --name=KeycloakDS
+
+
+# Launch Object Datasource
+#
+data-source add \
+	--name=launchobject \
+	--driver-name=postgresql \
+	--driver-class=org.postgresql.Driver \
+	--connection-url=jdbc:postgresql://docker_postgres:5432/launchobject \
+	--jndi-name=java:/jdbc/launchobject \
+	--user-name=root \
+	--password=password \
+	--enabled=true \
+	--jta=true \
+	--use-ccm=true \
+	--use-java-context=true \
+	--valid-connection-checker-class-name=org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLValidConnectionChecker \
+	--background-validation=true \
+	--exception-sorter-class-name=org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLExceptionSorter
+
+# Keycloak Datasource
+#
+data-source add	\
+	--name=keycloak \
+	--driver-name=postgresql \
+	--driver-class=org.postgresql.Driver \
+	--connection-url=jdbc:postgresql://docker_postgres:5432/keycloak \
+	--jndi-name=java:/jdbc/keycloak \
+	--user-name=root \
+	--password=password \
+	--enabled=true \
+	--jta=true \
+	--use-ccm=true \
+	--use-java-context=true \
+	--valid-connection-checker-class-name=org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLValidConnectionChecker \
+	--background-validation=true \
+	--exception-sorter-class-name=org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLExceptionSorter
+
+# Try increasing pool sizes
+#
+/subsystem=ejb3/thread-pool=default/:write-attribute(name=max-threads,value=100)
+/subsystem=ejb3/:write-attribute(name=default-slsb-instance-pool,value=slsb-strict-max-pool)
+/subsystem=io/worker=default/:write-attribute(name=task-max-threads,value=100)
+/subsystem=io/worker=default/:write-attribute(name=io-threads,value=100)
+
+# Set up Keycloak Data
+#
+/subsystem=keycloak-server/spi=connectionsJpa/provider=default:write-attribute(name=properties.dataSource,value=java:/jdbc/keycloak)
+
+# Execute the batch
+#
+run-batch
