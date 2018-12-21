@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Make sure our scripts are read-able
+# Make sure our scripts are readable
 chmod -R 777 ./keycloak
 
 # Stop the existing docker containers we made with Compose
