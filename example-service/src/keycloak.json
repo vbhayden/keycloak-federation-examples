@@ -1,6 +1,6 @@
 {
     "realm": "example-realm",
-    "auth-server-url": "http://docker_keycloak:8081/auth",
+    "auth-server-url": "http://{{keycloak-url}}:8081/auth",
     "ssl-required": "none",
     "resource": "example-client",
     "public-client": true,

@@ -11,6 +11,9 @@ const Keycloak = require('keycloak-connect');
 // Read our Keycloak config file
 const keycloakConfig = JSON.parse(fs.readFileSync("./keycloak.json"));
 
+// Adjust for our docker env variable
+keycloakConfig["auth-server-url"] = `http://${(process.env.KEYCLOAK_URL || "localhost")}:8081/auth`
+
 // Constants
 const PORT = (process.env.port || 3000);
 

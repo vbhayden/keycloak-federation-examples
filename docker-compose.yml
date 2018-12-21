@@ -18,6 +18,8 @@ services:
     ports:
       - "3000:3000"
     container_name: docker_service
+    environment:
+      KEYCLOAK_URL: "192.168.30.153" # Change this!
 
   # Keycloak instance.  This thing is the whole point of the repo
   keycloak:
