@@ -3,7 +3,7 @@
    "enabled":true,
    "sslRequired":"none",
    "displayName":"Example Keycloak Sign-In",
-   "displayNameHtml":"<h1 style=\"font-size: 40pt; font-weight: 400;\">TLA Sign In</h1>",
+   "displayNameHtml":"<h1 style=\"font-size: 40pt; font-weight: 400;\">Keycloak Sign-In</h1>",
    "bruteForceProtected":false,
    "browserFlow":"browser",
    "clientAuthenticationFlow":"clients",
