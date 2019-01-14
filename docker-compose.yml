@@ -18,20 +18,41 @@ services:
     ports:
       - "3000:3000"
     container_name: docker_service
-    environment:
-      KEYCLOAK_URL: "localhost" # Change this!
+    network_mode: "host"
 
-  # Keycloak instance.  This thing is the whole point of the repo
+  # Keycloak instance that we'll be integrating with the various
+  # identity providers.  Be careful when setting the password, as
+  # it gets picky about overly simplistic ones.
   keycloak:
     restart: always
     build: 
       context: keycloak
+      args:
+        WILDFLY_USERNAME: root
+        WILDFLY_PASSWORD: Pa55word12345
+        KEYCLOAK_USERNAME: root
+        KEYCLOAK_PASSWORD: Pa55word12345
     ports:
       - "8081:8080"
       - "9991:9990"
     links:
       - postgres:docker_postgres
+      - example-service:docker_service
     container_name: docker_keycloak
+
+  # SAML IdP
+  saml:
+    restart: always
+    build:
+      context: simple-saml
+    ports:
+      - 8080:8080
+      - 8443:8080
+    environment:
+      SIMPLESAMLPHP_SP_ENTITY_ID: "http://${KEYCLOAK_URL}:8081/auth/realms/example-realm"
+      SIMPLESAMLPHP_SP_ASSERTION_CONSUMER_SERVICE: "http://${KEYCLOAK_URL}:8081/auth/realms/example-realm/broker/saml/endpoint"
+      SIMPLESAMLPHP_SP_SINGLE_LOGOUT_SERVICE: "http://${KEYCLOAK_URL}:8081/auth/realms/example-realm/broker/saml/endpoint"
+    container_name: docker_saml
 
   # OpenLDAP server
   openldap:
