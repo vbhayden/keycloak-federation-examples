@@ -1,5 +1,5 @@
 Keycloak Federation Examples
-=================
+--------------
 This project is a Dockerized Keycloak instance pre-configured with various Identity Providers (IdPs).
 
 If you've been tasked with standing up a Keycloak instance -- or maybe just confused about how to protect a web service using Keycloak -- this might be a good starting place for you.  Several protocols are already defined with the following:
