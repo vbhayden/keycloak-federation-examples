@@ -235,7 +235,7 @@
       "firstBrokerLoginFlowAlias": "first broker login",
       "config": {
         "hideOnLoginPage": "",
-        "clientSecret": "**********",
+        "clientSecret": "9ba88d155e24145b6ab638629ac82d973b3afd11",
         "clientId": "cb1df4ef524c5229c108",
         "disableUserInfo": "",
         "useJwksUrl": "true"
