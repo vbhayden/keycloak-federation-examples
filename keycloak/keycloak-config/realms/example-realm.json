@@ -36,6 +36,26 @@
   "quickLoginCheckMilliSeconds": 1000,
   "maxDeltaTimeSeconds": 43200,
   "failureFactor": 30,
+  "users": [
+   {
+       "username":"user",
+       "firstName":"Example",
+       "lastName":"User",
+       "email":"example@keycloak.org",
+       "enabled":true,
+       "credentials":[
+          {
+             "type":"password",
+             "value":"password"
+          }
+       ],
+       "clientRoles":{
+          "account":[
+             "manage-account"
+          ]
+       }
+    }
+  ],
   "roles": {
     "realm": [
       {
