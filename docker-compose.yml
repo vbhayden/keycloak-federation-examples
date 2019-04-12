@@ -1,36 +1,6 @@
 version: '3'
 services:
-  
-  nginx:
-    restart: always
-    build:
-      context: nginx
-      args:
-        HOSTNAME: localhost
-    ports:
-      - 80:80
-      - 443:443
-    container_name: docker_nginx
-    volumes:
-      - ./nginx/letsencrypt:/usr/share/nginx/html
-
-
-  keycloak:
-    restart: always
-    build: 
-      context: keycloak
-      args:
-        WILDFLY_USERNAME: root
-        WILDFLY_PASSWORD: Pa55word12345
-        KEYCLOAK_USERNAME: root
-        KEYCLOAK_PASSWORD: Pa55word12345
-    ports:
-      - 8080:8080
-    links:
-      - postgres:docker_postgres
-    container_name: docker_keycloak
-
-
+ 
   postgres:
     restart: always
     build: 
@@ -41,20 +11,79 @@ services:
     volumes:
       - ./postgres/data:/var/lib/postgresql/data
 
-  orient-db:
+  example-service:
     restart: always
     build: 
-      context: orient-db
-    container_name: docker_orient
-    network_mode: "host"
+      context: example-service
     ports:
-      - "2424:2424"
-      - "2480:2480"
-    container_name: docker_postgres
-    environment:
-      ORIENTDB_ROOT_PASSWORD: "root"
-    volumes:
-      - ./orient-db/data/backup:/orientdb/backup
-      #- ./orient-db/data/config:/orientdb/config
-      - ./orient-db/data/databases:/orientdb/databases
+      - "3000:3000"
+    container_name: docker_service
+    network_mode: "host"
 
+  # Keycloak instance that we'll be integrating with the various
+  # identity providers.  Be careful when setting the password, as
+  # it gets picky about overly simplistic ones.
+  keycloak:
+    restart: always
+    build: 
+      context: keycloak
+      args:
+        WILDFLY_USERNAME: root
+        WILDFLY_PASSWORD: Pa55word12345
+        KEYCLOAK_USERNAME: root
+        KEYCLOAK_PASSWORD: Pa55word12345
+    ports:
+      - "8081:8080"
+      - "9991:9990"
+    links:
+      - postgres:docker_postgres
+      - example-service:docker_service
+    container_name: docker_keycloak
+
+  # SAML IdP
+  saml:
+    restart: always
+    build:
+      context: simple-saml
+    ports:
+      - 8080:8080
+      - 8443:8080
+    environment:
+      SIMPLESAMLPHP_SP_ENTITY_ID: "http://${KEYCLOAK_URL}:8081/auth/realms/example-realm"
+      SIMPLESAMLPHP_SP_ASSERTION_CONSUMER_SERVICE: "http://${KEYCLOAK_URL}:8081/auth/realms/example-realm/broker/saml/endpoint"
+      SIMPLESAMLPHP_SP_SINGLE_LOGOUT_SERVICE: "http://${KEYCLOAK_URL}:8081/auth/realms/example-realm/broker/saml/endpoint"
+    container_name: docker_saml
+
+  # OpenLDAP server
+  openldap:
+    restart: always
+    command: --loglevel debug
+    image: osixia/openldap:1.1.5
+    container_name: docker_openldap
+    environment:
+      LDAP_LOG_LEVEL: "256"
+      LDAP_ORGANISATION: "Example Company"
+      LDAP_DOMAIN: "example.com"
+      LDAP_ADMIN_PASSWORD: "password"
+    tty: true
+    stdin_open: true
+    volumes:
+      - ./openldap/data:/var/lib/ldap
+      - ./openldap/config:/etc/ldap/slapd.d
+      - ./openldap/certs:/container/service/slapd/assets/certs/
+    ports:
+      - "389:389"
+      - "639:639"
+
+  # PHP-based web client for interacting with the OpenLDAP instance
+  phpldapadmin:
+    restart: always
+    image: osixia/phpldapadmin:latest
+    container_name: docker_phpldapadmin
+    environment:
+      PHPLDAPADMIN_LDAP_HOSTS: "docker_openldap"
+      PHPLDAPADMIN_HTTPS=false:
+    ports:
+      - "8082:80"
+    depends_on:
+      - openldap
