@@ -50,4 +50,4 @@ The above steps and the original training materials assume that everything will 
 #
 KEYCLOAK_URL=localhost
 ```
-Note that changing this may cause a mismatch between the federated redirect URIs and your Keycloak instance.  To rectify this, 
+Note that changing this may cause a mismatch between the federated redirect URIs and your Keycloak instance.  To rectify this, you'll need to update the expected redirect URIs for whichever federation source you're using.  In the GitHub OAuth case, for example, you might need to create your own GitHub App that allows a specific domain, as the one established for this project will expect `localhost`.
