@@ -10,7 +10,7 @@ ARG KEYCLOAK_PASSWORD
 # Add the PostgreSQL module to the server
 #
 RUN cd /tmp && \
-    curl -O http://central.maven.org/maven2/org/postgresql/postgresql/$POSTGRES_JDBC_VERSION/postgresql-$POSTGRES_JDBC_VERSION.jar && \
+    curl -O http://repo1.maven.org/maven2/org/postgresql/postgresql/$POSTGRES_JDBC_VERSION/postgresql-$POSTGRES_JDBC_VERSION.jar && \
     mkdir -p /opt/jboss/keycloak/modules/system/layers/base/org/postgresql/main && \
     mv postgresql-$POSTGRES_JDBC_VERSION.jar /opt/jboss/keycloak/modules/system/layers/base/org/postgresql/main/postgresql.jar
 
